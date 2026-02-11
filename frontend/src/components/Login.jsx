@@ -3,28 +3,24 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Button, Form, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthProvider';
 
 const LoginPage = () => {
+  const auth = useAuth();
+  const navigate = useNavigate();
+
   const formik = useFormik({
-    initialValues: {
-      username: '',
-      password: '',
-    },
+    initialValues: { username: '', password: '' },
     validationSchema: Yup.object({
       username: Yup.string().required('El usuario es obligatorio'),
       password: Yup.string().required('La contraseña es obligatoria'),
     }),
     onSubmit: async (values) => {
       try {
-        // Esta es la ruta de la API del servidor de Hexlet
         const response = await axios.post('/api/v1/login', values);
-        
-        // El servidor devuelve un token y el nombre de usuario
-        console.log('Login exitoso:', response.data);
-        localStorage.setItem('user', JSON.stringify(response.data));
-        
-        // Aquí redirigiremos al chat más adelante
-        window.location.href = '/'; 
+        auth.logIn(response.data);
+        navigate('/');
       } catch (err) {
         if (err.isAxiosError && err.response.status === 401) {
           alert('Usuario o contraseña incorrectos');
@@ -46,17 +42,14 @@ const LoginPage = () => {
                 <Form.Group className="form-floating mb-3">
                   <Form.Control
                     name="username"
-                    placeholder="Tu nombre de usuario"
+                    placeholder="Nombre de usuario"
                     onChange={formik.handleChange}
                     value={formik.values.username}
                     isInvalid={formik.touched.username && !!formik.errors.username}
                   />
                   <Form.Label>Nombre de usuario</Form.Label>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.username}
-                  </Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{formik.errors.username}</Form.Control.Feedback>
                 </Form.Group>
-
                 <Form.Group className="form-floating mb-4">
                   <Form.Control
                     type="password"
@@ -67,14 +60,9 @@ const LoginPage = () => {
                     isInvalid={formik.touched.password && !!formik.errors.password}
                   />
                   <Form.Label>Contraseña</Form.Label>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.password}
-                  </Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{formik.errors.password}</Form.Control.Feedback>
                 </Form.Group>
-
-                <Button variant="outline-primary" className="w-100 mb-3" type="submit">
-                  Iniciar sesión
-                </Button>
+                <Button variant="outline-primary" className="w-100 mb-3" type="submit">Iniciar sesión</Button>
               </Form>
             </Card.Body>
           </Card>
