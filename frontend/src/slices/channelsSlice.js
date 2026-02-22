@@ -21,9 +21,10 @@ const channelsSlice = createSlice({
     openModal: (state, { payload }) => {
       state.modal = { isOpen: true, type: payload.type, extraData: payload.extraData };
     },
-    closeModal: (state) => { state.modal.isOpen = false; },
+    closeModal: (state) => { state.modal = { isOpen: false, type: null, extraData: null }; },
   },
 });
 
 export const { actions } = channelsSlice;
+export const selectors = channelsAdapter.getSelectors((state) => state.channels);
 export default channelsSlice.reducer;

@@ -1,38 +1,34 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions } from '../../slices/channelsSlice';
+import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import socket from '../../socket';
 
 const Remove = ({ show, onHide }) => {
-  const dispatch = useDispatch();
-  // Obtenemos el ID del canal que queremos borrar del estado de la modal
-  const channelId = useSelector((state) => state.channels.modal.extraData?.channelId);
+  const { t } = useTranslation();
+  const { extraData } = useSelector((state) => state.channels.modal);
 
   const handleRemove = () => {
-    // Aquí enviarás el evento al socket más adelante
-    // socket.emit('removeChannel', { id: channelId });
-    dispatch(actions.removeChannel(channelId));
-    onHide();
+    socket.emit('removeChannel', { id: extraData.id }, (r) => {
+      if (r.status === 'ok') {
+        toast.success(t('channels.removed'));
+        onHide();
+      }
+    });
   };
 
   return (
     <Modal show={show} onHide={onHide} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Eliminar canal</Modal.Title>
-      </Modal.Header>
+      <Modal.Header closeButton><Modal.Title>{t('modals.remove')}</Modal.Title></Modal.Header>
       <Modal.Body>
-        <p className="lead">¿Seguro que quieres eliminar este canal?</p>
+        <p className="lead">Confirm?</p>
         <div className="d-flex justify-content-end">
-          <Button variant="secondary" onClick={onHide} className="me-2">
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleRemove}>
-            Eliminar
-          </Button>
+          <Button variant="secondary" onClick={onHide} className="me-2">{t('modals.cancel')}</Button>
+          <Button variant="danger" onClick={handleRemove}>{t('modals.confirm')}</Button>
         </div>
       </Modal.Body>
     </Modal>
   );
 };
-
 export default Remove;

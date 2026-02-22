@@ -1,70 +1,71 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Button, Form, Card, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthProvider';
 
 const LoginPage = () => {
+  const { t } = useTranslation();
   const auth = useAuth();
   const navigate = useNavigate();
+  const [authFailed, setAuthFailed] = useState(false);
 
   const formik = useFormik({
     initialValues: { username: '', password: '' },
-    validationSchema: Yup.object({
-      username: Yup.string().required('El usuario es obligatorio'),
-      password: Yup.string().required('La contraseña es obligatoria'),
-    }),
     onSubmit: async (values) => {
+      setAuthFailed(false);
       try {
-        const response = await axios.post('/api/v1/login', values);
-        auth.logIn(response.data);
+        const { data } = await axios.post('/api/v1/login', values);
+        auth.logIn(data);
         navigate('/');
       } catch (err) {
-        if (err.isAxiosError && err.response.status === 401) {
-          alert('Usuario o contraseña incorrectos');
-        } else {
-          alert('Hubo un error de conexión');
+        if (err.response?.status === 401) {
+          setAuthFailed(true);
         }
       }
     },
   });
 
   return (
-    <Container className="vh-100">
-      <Row className="justify-content-center align-content-center h-100">
-        <Col xs={12} md={8} xxl={6}>
+    <Container className="h-100 mt-5">
+      <Row className="justify-content-center align-content-center">
+        <Col className="col-12 col-md-8 col-xxl-6">
           <Card className="shadow-sm">
             <Card.Body className="p-5">
-              <h1 className="text-center mb-4">Ingresar</h1>
               <Form onSubmit={formik.handleSubmit}>
+                <h1 className="text-center mb-4">{t('login.header')}</h1>
                 <Form.Group className="form-floating mb-3">
-                  <Form.Control
-                    name="username"
-                    placeholder="Nombre de usuario"
+                  <Form.Control 
+                    name="username" 
+                    id="username" 
+                    placeholder={t('login.username')}
                     onChange={formik.handleChange}
                     value={formik.values.username}
-                    isInvalid={formik.touched.username && !!formik.errors.username}
+                    isInvalid={authFailed}
                   />
-                  <Form.Label>Nombre de usuario</Form.Label>
-                  <Form.Control.Feedback type="invalid">{formik.errors.username}</Form.Control.Feedback>
+                  <Form.Label htmlFor="username">{t('login.username')}</Form.Label>
                 </Form.Group>
                 <Form.Group className="form-floating mb-4">
-                  <Form.Control
+                  <Form.Control 
+                    name="password" 
+                    id="password" 
                     type="password"
-                    name="password"
-                    placeholder="Contraseña"
+                    placeholder={t('login.password')}
                     onChange={formik.handleChange}
                     value={formik.values.password}
-                    isInvalid={formik.touched.password && !!formik.errors.password}
+                    isInvalid={authFailed}
                   />
-                  <Form.Label>Contraseña</Form.Label>
-                  <Form.Control.Feedback type="invalid">{formik.errors.password}</Form.Control.Feedback>
+                  <Form.Label htmlFor="password">{t('login.password')}</Form.Label>
+                  {authFailed && <Form.Control.Feedback type="invalid">{t('errors.auth')}</Form.Control.Feedback>}
                 </Form.Group>
-                <Button variant="outline-primary" className="w-100 mb-3" type="submit">Iniciar sesión</Button>
+                <Button type="submit" variant="outline-primary" className="w-100 mb-3">{t('login.submit')}</Button>
               </Form>
             </Card.Body>
+            <Card.Footer className="p-4 text-center">
+              <span>{t('login.noAccount')} </span><Link to="/signup">{t('login.signup')}</Link>
+            </Card.Footer>
           </Card>
         </Col>
       </Row>
