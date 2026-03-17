@@ -1,25 +1,27 @@
+// frontend/src/slices/messagesSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { removeChannel } from './channelsSlice.js'; // Importación directa
+import { fetchInitialData } from './thunks.js';
+
+const initialState = {
+  items: [],
+};
 
 const messagesSlice = createSlice({
   name: 'messages',
-  initialState: { messages: [] },
+  initialState,
   reducers: {
-    setMessages: (state, { payload }) => {
-      state.messages = payload;
-    },
-    addMessage: (state, { payload }) => {
-      state.messages.push(payload);
-    },
+    messageReceived: (oldState, action) => ({
+      ...oldState,
+      items: [...oldState.items, action.payload],
+    }),
   },
   extraReducers: (builder) => {
-    // Al eliminar un canal, eliminamos sus mensajes
-    builder.addCase(removeChannel, (state, action) => {
-      const channelId = action.payload.id;
-      state.messages = state.messages.filter((m) => m.channelId !== channelId);
-    });
+    builder.addCase(fetchInitialData.fulfilled, (oldState, action) => ({
+      ...oldState,
+      items: action.payload.messages,
+    }));
   },
 });
 
-export const { setMessages, addMessage } = messagesSlice.actions;
+export const { messageReceived } = messagesSlice.actions;
 export default messagesSlice.reducer;

@@ -1,27 +1,57 @@
-import React, { createContext, useState, useContext, useMemo } from 'react';
+// src/contexts/AuthProvider.jsx
+import React, {
+  useState, useContext, createContext, useEffect, useMemo,
+} from 'react';
 
 const AuthContext = createContext({});
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('userId')) || null);
+export const useAuth = () => useContext(AuthContext);
 
-  const logIn = (userData) => {
-    localStorage.setItem('userId', JSON.stringify(userData));
-    setUser(userData);
+const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState(null);
+  const [username, setUsername] = useState(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    const storedUsername = localStorage.getItem('username');
+    if (storedToken) {
+      setToken(storedToken);
+    }
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
+  const logIn = (newToken, newUsername) => {
+    setToken(newToken);
+    setUsername(newUsername);
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('username', newUsername);
   };
 
   const logOut = () => {
-    localStorage.removeItem('userId');
-    setUser(null);
+    setToken(null);
+    setUsername(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
   };
 
-  const authValue = useMemo(() => ({ user, logIn, logOut }), [user]);
+  const isAuthenticated = Boolean(token);
+
+  // Memoizamos el objeto para no recrearlo en cada render
+  const value = useMemo(() => ({
+    token,
+    username,
+    isAuthenticated,
+    logIn,
+    logOut,
+  }), [token, username, isAuthenticated]);
 
   return (
-    <AuthContext.Provider value={authValue}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export default AuthProvider;
