@@ -8,17 +8,22 @@ const MessagesBox = () => {
   const messages = useSelector((state) => state.messages.items);
   const currentChannelId = useSelector((state) => state.channels.currentChannelId);
 
+  // Filtrar solo los mensajes del canal actual
   const filteredMessages = messages.filter(
     (msg) => msg.channelId === currentChannelId,
   );
 
   return (
     <div>
+      {/* "Mensajes" => t('messagesTitle') => "Messages" */}
       <h2>{t('messagesTitle')}</h2>
       <ul>
         {filteredMessages.map((msg) => (
           <li key={msg.id}>
-            <strong>{msg.username || 'anon'}:</strong>
+            <strong>
+              {msg.username || 'anon'}
+              :
+            </strong>
             {' '}
             {msg.body}
           </li>
