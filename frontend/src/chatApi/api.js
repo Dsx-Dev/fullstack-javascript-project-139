@@ -1,4 +1,4 @@
-// frontend/src/chatApi/api.js
+ // frontend/src/chatApi/api.js
 import axios from 'axios';
 
 const getToken = () => localStorage.getItem('token') || null;
@@ -13,7 +13,6 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (cfg) => {
-    // Creamos una copia para no mutar 'cfg'
     const newCfg = { ...cfg };
     const token = getToken();
     if (token) {
@@ -31,7 +30,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Opción #1: Solo redirige a /login si YA había un token (usuario logueado).
       const token = localStorage.getItem('token');
       if (token) {
         localStorage.removeItem('token');
@@ -43,27 +41,16 @@ api.interceptors.response.use(
   },
 );
 
-// ----- FUNCIONES DE LOGIN, SIGNUP, GET CHANNELS, GET MESSAGES ----- //
 export const login = async (username, password) => {
   try {
     const response = await api.post('/login', { username, password });
-    console.log('=== Respuesta del servidor al login ===', response.data);
-
     const { token, username: returnedUser } = response.data || {};
-    console.log('Desestructurado: token=', token, 'username=', returnedUser);
-
     if (token && returnedUser) {
-      console.log('Guardando en localStorage:', token, returnedUser);
       localStorage.setItem('token', token);
       localStorage.setItem('username', returnedUser);
-    } else {
-      console.warn('El servidor no devolvió username o token');
     }
-
-    console.log('✅ Login exitoso:', response.data);
     return response.data;
   } catch (error) {
-    console.error('🚨 Error en login:', error);
     throw error;
   }
 };
@@ -74,25 +61,13 @@ export const signup = async (username, password) => {
 };
 
 export const getChannels = async () => {
-  try {
-    const response = await api.get('/channels');
-    console.log('✅ Canales obtenidos:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('🚨 Error al obtener canales:', error);
-    throw error;
-  }
+  const response = await api.get('/channels');
+  return response.data;
 };
 
 export const getMessages = async () => {
-  try {
-    const response = await api.get('/messages');
-    console.log('✅ Mensajes obtenidos:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('🚨 Error al obtener mensajes:', error);
-    throw error;
-  }
+  const response = await api.get('/messages');
+  return response.data;
 };
 
 export default api;
