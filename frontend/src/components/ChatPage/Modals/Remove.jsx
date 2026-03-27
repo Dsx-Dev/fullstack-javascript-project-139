@@ -1,52 +1,45 @@
-// frontend/src/components/ChatPage/Modals/Remove.jsx
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify'; // Importar toast
+import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { removeChannel } from '../../../slices/thunks.js';
 import { closeModal } from '../../../slices/modalSlice.js';
+
+const modalStyle = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 };
+const cardStyle = { background: '#2b2d31', borderRadius: '12px', padding: '2rem', width: '100%', maxWidth: '400px', boxShadow: '0 8px 32px rgba(0,0,0,0.6)', border: '1px solid #3a3b3f' };
 
 const Remove = () => {
   const dispatch = useDispatch();
   const { isOpen, type, channelId } = useSelector((state) => state.modal);
   const { t } = useTranslation();
 
-  if (type !== 'removeChannel' || !isOpen) {
-    return null;
-  }
+  if (type !== 'removeChannel' || !isOpen) return null;
 
   const handleConfirm = async () => {
     try {
       await dispatch(removeChannel({ id: channelId })).unwrap();
-      // Éxito => toast success
-      toast.success(t('success.removeChannel')); // "Channel removed"
+      toast.success(t('success.removeChannel'));
       dispatch(closeModal());
-    } catch (err) {
-      // Error => toast error
-      toast.error(t('errors.channelRemove')); // "Error removing channel"
-      console.error(t('errors.channelRemove'), err);
-    }
-  };
-
-  const handleCancel = () => {
-    dispatch(closeModal());
+    } catch { toast.error(t('errors.channelRemove')); }
   };
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal">
-        <h2>{t('modal.removeChannel')}</h2>
-        <p>{t('modal.confirm')}</p>
-        <button
-          type="button"
-          className="btn-danger"
-          onClick={handleConfirm}
-        >
-          {t('send')}
-        </button>
-        <button type="button" onClick={handleCancel}>
-          {t('cancel')}
-        </button>
+    <div style={modalStyle} onClick={() => dispatch(closeModal())}>
+      <div style={cardStyle} onClick={e => e.stopPropagation()}>
+        <h2 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>Delete channel</h2>
+        <p style={{ color: '#96989d', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Are you sure? This cannot be undone.</p>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+          <button type="button" onClick={() => dispatch(closeModal())}
+            style={{ background: 'transparent', border: '1px solid #4a4b52', color: '#96989d', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = '#7b5cf6'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = '#4a4b52'}
+          >Cancel</button>
+          <button type="button" onClick={handleConfirm}
+            style={{ background: '#ed4245', border: 'none', color: '#fff', padding: '10px 20px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', fontSize: '14px' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#c03537'}
+            onMouseLeave={e => e.currentTarget.style.background = '#ed4245'}
+          >Delete</button>
+        </div>
       </div>
     </div>
   );
