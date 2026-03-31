@@ -18,7 +18,7 @@ const MessagesBox = () => {
     <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
       {filteredMessages.length === 0 && (
         <div style={{ color: '#72767d', textAlign: 'center', marginTop: '40px', fontSize: '14px' }}>
-          No messages yet. Be the first! 👋
+          {t('messageBody')}
         </div>
       )}
       {filteredMessages.map((msg) => (

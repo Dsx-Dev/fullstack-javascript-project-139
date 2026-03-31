@@ -26,19 +26,17 @@ const Remove = () => {
   return (
     <div style={modalStyle} onClick={() => dispatch(closeModal())}>
       <div style={cardStyle} onClick={e => e.stopPropagation()}>
-        <h2 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>Delete channel</h2>
-        <p style={{ color: '#96989d', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Are you sure? This cannot be undone.</p>
+        <h2 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>{t('modal.removeChannel')}</h2>
+        <p style={{ color: '#96989d', fontSize: '0.9rem', marginBottom: '1.5rem' }}>{t('modal.confirm')}</p>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
           <button type="button" onClick={() => dispatch(closeModal())}
-            style={{ background: 'transparent', border: '1px solid #4a4b52', color: '#96989d', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = '#7b5cf6'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = '#4a4b52'}
-          >Cancel</button>
+            style={{ background: 'transparent', border: '1px solid #4a4b52', color: '#96989d', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}>
+            {t('cancel')}
+          </button>
           <button type="button" onClick={handleConfirm}
-            style={{ background: '#ed4245', border: 'none', color: '#fff', padding: '10px 20px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', fontSize: '14px' }}
-            onMouseEnter={e => e.currentTarget.style.background = '#c03537'}
-            onMouseLeave={e => e.currentTarget.style.background = '#ed4245'}
-          >Delete</button>
+            style={{ background: '#ed4245', border: 'none', color: '#fff', padding: '10px 20px', borderRadius: '6px', fontWeight: '700', cursor: 'pointer', fontSize: '14px' }}>
+            {t('modal.remove')}
+          </button>
         </div>
       </div>
     </div>
