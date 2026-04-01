@@ -1,8 +1,5 @@
 ### Hexlet tests and linter status:
-[![Actions Status](https://github.com/Dsx-Dev/fullstack-javascript-project-139/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/Dsx-Dev/fullstack-javascript-project-139/actions) [![Maintainability](https://api.codeclimate.com/v1/badges/2a21a3246eab2f086bda/maintainability)](https://codeclimate.com/github/Dsx-Dev/fullstack-javascript-project-139/maintainability)
-
- [![Maintainability](https://qlty.sh/gh/Dsx-Dev/projects/fullstack-javascript-project-139/maintainability.svg)](https://qlty.sh/gh/Dsx-Dev/projects/fullstack-javascript-project-139)
-
+[![Actions Status](https://github.com/Dsx-Dev/fullstack-javascript-project-139/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/Dsx-Dev/fullstack-javascript-project-139/actions) [![Maintainability](https://qlty.sh/gh/Dsx-Dev/projects/fullstack-javascript-project-139/maintainability.svg)](https://qlty.sh/gh/Dsx-Dev/projects/fullstack-javascript-project-139)
 # ChatAPP
 
 Este proyecto es un chat en tiempo real basado en **React** (frontend) y el servidor de **Hexlet** (backend).  
