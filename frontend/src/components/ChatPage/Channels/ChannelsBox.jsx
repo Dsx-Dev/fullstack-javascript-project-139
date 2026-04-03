@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { openModal } from '../../../slices/modalSlice.js';
@@ -9,11 +9,6 @@ const ChannelsBox = () => {
   const channels = useSelector((state) => state.channels.items);
   const currentChannelId = useSelector((state) => state.channels.currentChannelId);
   const { t } = useTranslation();
-  const [openMenuId, setOpenMenuId] = useState(null);
-
-  const handleToggleMenu = (id) => {
-    setOpenMenuId(openMenuId === id ? null : id);
-  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -24,54 +19,37 @@ const ChannelsBox = () => {
         <button
           type="button"
           onClick={() => dispatch(openModal({ type: 'addChannel' }))}
-          style={{ background: '#3d3f45', border: 'none', color: '#b9bbbe', width: '24px', height: '24px', borderRadius: '50%', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, transition: 'all 0.2s' }}
-          onMouseEnter={e => { e.target.style.background = '#B8860B'; e.target.style.color = '#fff'; }}
-          onMouseLeave={e => { e.target.style.background = '#3d3f45'; e.target.style.color = '#b9bbbe'; }}
+          style={{ background: '#3d3f45', border: 'none', color: '#b9bbbe', width: '24px', height: '24px', borderRadius: '50%', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
         >+</button>
       </div>
       <ul style={{ listStyle: 'none', padding: '8px 0', margin: 0, overflowY: 'auto', flex: 1 }}>
         {channels.map((ch) => (
-          <li key={ch.id} style={{ position: 'relative' }}>
+          <li key={ch.id}>
             <div style={{ display: 'flex', alignItems: 'center', margin: '1px 8px', borderRadius: '4px', background: ch.id === currentChannelId ? '#404249' : 'transparent' }}>
               <button
                 id={`channel-${ch.id}`}
                 type="button"
                 onClick={() => dispatch(setCurrentChannelId(ch.id))}
-                style={{ flex: 1, background: 'transparent', border: 'none', color: ch.id === currentChannelId ? '#fff' : '#96989d', padding: '6px 8px', textAlign: 'left', cursor: 'pointer', fontSize: '15px', fontWeight: ch.id === currentChannelId ? '600' : '400', transition: 'color 0.15s' }}
-                onMouseEnter={e => { if (ch.id !== currentChannelId) e.currentTarget.style.color = '#dcddde'; }}
-                onMouseLeave={e => { if (ch.id !== currentChannelId) e.currentTarget.style.color = '#96989d'; }}
+                style={{ flex: 1, background: 'transparent', border: 'none', color: ch.id === currentChannelId ? '#fff' : '#96989d', padding: '6px 8px', textAlign: 'left', cursor: 'pointer', fontSize: '15px', fontWeight: ch.id === currentChannelId ? '600' : '400' }}
               >
                 <span style={{ color: '#72767d', marginRight: '4px' }}>#</span>{ch.name}
               </button>
               {ch.removable && (
-                <div style={{ position: 'relative' }}>
+                <div style={{ display: 'flex', gap: '8px', paddingRight: '8px' }}>
                   <button
                     type="button"
-                    role="button"
-                    aria-label={t('modal.menu')}
-                    aria-haspopup="true"
-                    aria-expanded={openMenuId === ch.id}
-                    onClick={() => handleToggleMenu(ch.id)}
-                    style={{ background: 'transparent', border: 'none', color: '#72767d', cursor: 'pointer', fontSize: '16px', padding: '2px 8px', borderRadius: '3px' }}
-                  >▾</button>
-                  {openMenuId === ch.id && (
-                    <div style={{ position: 'absolute', right: 0, top: '100%', background: '#2b2d31', border: '1px solid #3a3b3f', borderRadius: '6px', zIndex: 100, minWidth: '120px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
-                      <button
-                        type="button"
-                        onClick={() => { dispatch(openModal({ type: 'renameChannel', channelId: ch.id })); setOpenMenuId(null); }}
-                        style={{ display: 'block', width: '100%', background: 'transparent', border: 'none', color: '#dcddde', padding: '8px 12px', textAlign: 'left', cursor: 'pointer', fontSize: '14px' }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#404249'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-                      >{t('modal.rename')}</button>
-                      <button
-                        type="button"
-                        onClick={() => { dispatch(openModal({ type: 'removeChannel', channelId: ch.id })); setOpenMenuId(null); }}
-                        style={{ display: 'block', width: '100%', background: 'transparent', border: 'none', color: '#ed4245', padding: '8px 12px', textAlign: 'left', cursor: 'pointer', fontSize: '14px' }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#404249'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-                      >{t('modal.remove')}</button>
-                    </div>
-                  )}
+                    onClick={() => dispatch(openModal({ type: 'renameChannel', channelId: ch.id }))}
+                    style={{ background: '#3d3f45', border: 'none', color: '#b9bbbe', cursor: 'pointer', fontSize: '11px', padding: '3px 8px', borderRadius: '3px' }}
+                  >
+                    {t('modal.rename')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => dispatch(openModal({ type: 'removeChannel', channelId: ch.id }))}
+                    style={{ background: '#3d3f45', border: 'none', color: '#b9bbbe', cursor: 'pointer', fontSize: '11px', padding: '3px 8px', borderRadius: '3px' }}
+                  >
+                    {t('modal.remove')}
+                  </button>
                 </div>
               )}
             </div>
