@@ -23,9 +23,14 @@ const Rename = () => {
     if (type === 'renameChannel' && isOpen) {
       const current = channels.find((ch) => ch.id === channelId);
       if (current) setNewName(current.name);
-      if (inputRef.current) inputRef.current.focus();
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+          inputRef.current.select();
+        }
+      }, 50);
     }
-  }, [type, isOpen]);
+  }, [type, isOpen, channelId, channels]);
 
   if (type !== 'renameChannel' || !isOpen) return null;
 
@@ -34,27 +39,53 @@ const Rename = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newName.trim()) return;
-    if (channels.some((ch) => ch.name === newName.trim())) { toast.error(t('modal.unique')); return; }
+    if (channels.some((ch) => ch.name === newName.trim() && ch.id !== channelId)) {
+      toast.error(t('modal.unique'));
+      return;
+    }
     try {
       await dispatch(renameChannel({ id: channelId, newName: newName.trim() })).unwrap();
       toast.success(t('success.renameChannel'));
       dispatch(closeModal());
-    } catch { toast.error(t('errors.channelRename')); }
+    } catch {
+      toast.error(t('errors.channelRename'));
+    }
   };
 
   return (
     <div style={modalStyle} onClick={() => dispatch(closeModal())}>
-      <div style={cardStyle} onClick={e => e.stopPropagation()}>
-        <h2 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>{t('modal.renameChannel')}</h2>
-        <p style={{ color: '#96989d', fontSize: '0.875rem', marginBottom: '1.5rem' }}>#{currentChannel?.name}</p>
+      <div style={cardStyle} onClick={(e) => e.stopPropagation()}>
+        <h2 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.5rem' }}>
+          {t('modal.renameChannel')}
+        </h2>
+        <p style={{ color: '#96989d', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+          #{currentChannel?.name}
+        </p>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
-            <label htmlFor="name" style={{ color: '#b9bbbe', fontSize: '0.75rem', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>{t('modal.channelName')}</label>
-            <input ref={inputRef} id="name" name="name" type="text" value={newName} onChange={(e) => setNewName(e.target.value)} style={inputStyle} />
+            <label
+              htmlFor="name"
+              style={{ color: '#b9bbbe', fontSize: '0.75rem', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}
+            >
+              {t('modal.channelName')}
+            </label>
+            <input
+              ref={inputRef}
+              id="name"
+              name="name"
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              style={inputStyle}
+            />
           </div>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
-            <button type="button" onClick={() => dispatch(closeModal())} style={btnSecondary}>{t('cancel')}</button>
-            <button type="submit" style={btnPrimary}>{t('modal.rename')}</button>
+            <button type="button" onClick={() => dispatch(closeModal())} style={btnSecondary}>
+              {t('cancel')}
+            </button>
+            <button type="submit" style={btnPrimary}>
+              {t('modal.rename')}
+            </button>
           </div>
         </form>
       </div>
