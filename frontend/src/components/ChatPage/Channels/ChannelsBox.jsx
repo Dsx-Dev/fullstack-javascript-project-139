@@ -46,14 +46,14 @@ const ChannelsBox = () => {
                     style={{ background: 'transparent', border: 'none', color: '#72767d', cursor: 'pointer', fontSize: '12px', padding: '2px 5px', borderRadius: '3px', transition: 'all 0.15s' }}
                     onMouseEnter={e => { e.target.style.color = '#FFD700'; }}
                     onMouseLeave={e => { e.target.style.color = '#72767d'; }}
-                  >✏️</button>
+                  >{t('modal.rename')}</button>
                   <button
                     type="button"
                     onClick={() => dispatch(openModal({ type: 'removeChannel', channelId: ch.id }))}
                     style={{ background: 'transparent', border: 'none', color: '#72767d', cursor: 'pointer', fontSize: '12px', padding: '2px 5px', borderRadius: '3px', transition: 'all 0.15s' }}
                     onMouseEnter={e => { e.target.style.color = '#ed4245'; }}
                     onMouseLeave={e => { e.target.style.color = '#72767d'; }}
-                  >🗑️</button>
+                  >{t('modal.remove')}</button>
                 </div>
               )}
             </div>
